@@ -10,7 +10,7 @@ let template = `
     <router-view></router-view>  
   </div>
   `;
-
+//sdadas
 new Vue ({
   el : '#app',
   data : {
