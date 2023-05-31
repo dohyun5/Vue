@@ -26,6 +26,7 @@ export default {
           this.dataArray = data;
           if(this.dataArray != null && this.dataArray['board'].length > 0){
             this.$emit('update-data', this.dataArray);
+            this.$router.push({name:'boardList'}); //강제 호출이기 때문에 강제로 본인을 또 불러오는건 거절함.
             // this.listOk = true;
           }
         })

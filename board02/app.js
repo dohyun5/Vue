@@ -1,4 +1,5 @@
 import myHeader from './components/header.js'; 
+import router from './router/router.js'
 // import myBoardList from "./components/myBoardList.js"; 
 // import myBoardRead from "./components/myBoardRead.js"; 
 // import myBoardWrite from "./components/myBoardWrite.js"; 
@@ -10,7 +11,7 @@ let template = `
     <router-view></router-view>  
   </div>
   `;
-//sdadas
+
 new Vue ({
   el : '#app',
   data : {
@@ -31,7 +32,14 @@ new Vue ({
     updateDataArray : function(inputData){
       this.dataArray = inputData;
       // this.listOk = true;
-    }
+    },
+    getDataArray(){
+      return this.dataArray['board']
+    },
+    setDataArray(boardList){
+      this.dataArray['board'] = boardList
+    }  //데이터를 가져오기 위함 getter setter 같은 느낌 [데이터 서버설정을 안했기 때문에 임시로 vue에서 데이터를 보관.]
+    
     // boardList : function(){
     //   this.readOk = false;
     //   this.writeOk = false;
@@ -82,5 +90,6 @@ new Vue ({
     //   }
     // },
    
-  }
+  },
+  router // router : router [같다면 하나로 퉁 칠 수 있음]
 })

@@ -1,6 +1,6 @@
-import myBoardList from "./components/myBoardList.js"; 
-import myBoardRead from "./components/myBoardRead.js"; 
-import myBoardWrite from "./components/myBoardWrite.js"; 
+import myBoardList from "../components/myBoardList.js"; 
+import myBoardRead from "../components/myBoardRead.js"; 
+import myBoardWrite from "../components/myBoardWrite.js"; 
 
 export default new VueRouter({
   routes : [
@@ -8,7 +8,7 @@ export default new VueRouter({
     {
       path : '/',
       name : 'main',
-      components : {
+      component : {
         template : `
           <div>
             <h3>게시판을 불러와 주세요</h3>
@@ -20,13 +20,13 @@ export default new VueRouter({
     {
       path : '/boardList',
       name : 'boardList',
-      components : myBoardList
+      component : myBoardList
     },
     //boardRead
     {
       path : '/boardRead/:item',
       name : 'boardRead',
-      components : myBoardRead,
+      component : myBoardRead,
       props : true
 
     },
@@ -34,7 +34,7 @@ export default new VueRouter({
     {
       path : '/boardWrite',
       name : 'boardWrite',
-      components : myBoardWrite
+      component : myBoardWrite
     },
     //ETC
     {
