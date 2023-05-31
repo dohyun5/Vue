@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router@3/dist/vue-router.js"></script>
+</head>
+<body>
+  <div id="app">
+    <router-link to="/main">main</router-link>
+    <router-link to="/info/오늘날짜 : 20230531">info</router-link>
+
+    <router-view></router-view>
+  </div>
+  <script>
+    const mainComponent = {
+      template : `
+        <div>
+          <h1>메인페이지</h1>
+        </div>
+      `
+    }
+    const infoComponent = {
+      template : `
+        <div>
+          <h3>정보 페이지</h3>  
+          <p>{{data}}</p>
+        </div>
+      `,
+      props:['data']
+      // data : function(){
+      //   return {
+      //     info : ''
+      //   }
+      // },
+      // created : function(){
+      //   this.info = this$route.params.data; //route click 정보를 기반으로 현재 요청된 사항을 통해서 
+      //   //객체를 생성 객체에 등록되어 있음 info컴포넌트 들고 있는건vuerouter 인데 얘가 route를 관리함
+      // $가 붙는건 기본설정 값들이기 때문에 가능하면 안건드리는게 좋음.
+      // }
+
+    }
+    const router = new VueRouter({
+      routes :[
+        {path : '/main', component : mainComponent},
+        {path : '/info/:data', component: infoComponent, props: true}, //경로뒤에 데이터를 담아서 사용하기 위해 보내는 방식
+        {path : '/user/:id/pwd/:pwd', component : {template : `<div>User : {{this.$route.params.id}}<br> PW : {{this.$route.params.pwd}}</div>`}}
+      ]
+    })
+    let homeApp = new Vue({
+      el : '#app',
+      router : router
+    })
+  </script>
+  <div id="app2">
+     <!-- <router-link tag="button" to="/users/karina" style="color:blueviolet">User</router-link> -->
+     <router-link tag="button" :to="{name : 'user',params : {username:'karina'}}" style="color: blueviolet;">User</router-link>
+     <router-view></router-view>
+  </div>
+  <script>
+    const vueRouter = new VueRouter({
+      mode : 'history',
+      //  hash : '#' + '경로' -> server에 요청을 보내지 않고 이동 => default
+      //  history : '#'을 제외하고 SPA구현하기 위한 모드 , history API 
+      routes: [
+        {
+          path:'/users/:username', 
+          name : 'user', 
+          component : { 
+            template: `
+            <div>
+              <p>유저 정보 : {{username}}</p>
+            </div>`,
+          props : ['username']
+        },
+        props : true
+      }
+      ]
+    })
+    let userApp = new Vue({
+      el : '#app2',
+      router : vueRouter,
+      mothods : {
+        changeURL(){
+          if(true){
+            this.$route.push({name : 'user',
+                              params : {username : 'karina'}});
+          }else {
+            this.$route.push();
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>

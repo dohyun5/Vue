@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- <script src="https://unpkg.com/vue@2"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+  <style>
+    .tab-button {
+      padding: 6px 10px;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background: #f0f0f0;
+      margin-bottom: -1px;
+      margin-right: -1px;
+    }
+
+    .tab-button:hover {
+      background: #e0e0e0;
+    }
+
+    .tab-button.active {
+      background: #e0e0e0;
+    }
+
+    .tab {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    .posts-tab {
+      display: flex;
+    }
+
+    .posts-sidebar {
+      max-width: 40vw;
+      margin: 0;
+      padding: 0 10px 0 0;
+      list-style-type: none;
+      border-right: 1px solid #ccc;
+    }
+
+    .posts-sidebar li {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .posts-sidebar li:hover {
+      background: #eee;
+    }
+
+    .posts-sidebar li.selected {
+      background: lightblue;
+    }
+
+    .selected-post-container {
+      padding-left: 10px;
+    }
+
+    .selected-post> :first-child {
+      margin-top: 0;
+      padding-top: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <button v-on:click="changeComponent">컴포넌트 변경</button>
+    <h1>
+      <component :is="currentView"></component> <!-- is-현재상태 [동적인 컴포넌트 변경될때 마다 컴포넌트는 깨짐]-->
+    </h1>
+  </div>
+  <script>
+    let bookComponent = {
+      template: '<div>책 컴포넌트</div>'
+    }
+    let formComponent = {
+      template: '<div>폼 컴포넌트</div>'
+    }
+    let headerComponent = {
+      template: '<div>헤더 컴포넌트</div>'
+    }
+    let app = new Vue({
+      el: '#app',
+      data: {
+        currentView: bookComponent
+      },
+      components: {
+        bookComponent,
+        formComponent,
+        headerComponent
+      },
+      methods: {
+        changeComponent() {
+          if (this.currentView === headerComponent) {
+            this.currentView = bookComponent
+          } else {
+            this.currentView = this.currentView === bookComponent ? formComponent : headerComponent;
+          }
+        }
+      }
+    })
+  </script>
+  <div id="dynamic-component-demo">
+    <button v-for="tab in tabs" :key="tab" :class="['tab-button',{active : currentTab === tab}]"
+      v-on:click="currentTab = tab">{{tab}}</button>
+    <!-- for 사용할때 key값을 넣도록 권장하기에 넣음 큰 의미 X -->
+    <keep-alive>
+      <component :is="currentTabComponent" class="tab"></component>
+    </keep-alive>
+    <!--keep-alive로 감싸주면 기존 데이터 유지 (생명주기에서 파기를 막아줌) 사용할때는 전역 컴포넌트로 내부로 들어가면 문제 생길경우가 있음.-->
+    <!-- <input :value="1==1"> 미리 조건을 넣었기에 mothods가 없어도 됨-->
+    <!-- <form onsubmit="return false"></form>  리턴 강제로 막음 -->
+  </div>
+  <script>
+    //전역 컴포넌트 1
+    Vue.component('tab-posts', {
+      data: function () {
+        return {
+          posts: [{
+              id: 1,
+              title: 'Cat Ipsum',
+              content: '<p>ipsum dolor sit amet consectetur, adipisicing elit. Corporis quam sed recusandae debitis illum quas aliquid dolorem odit. Nobis ea ullam quae earum aperiam, excepturi non soluta suscipit tempora voluptas?</p>'
+            },
+            {
+              id: 2,
+              title: 'Hipster Ipsum',
+              content: '<p>ipsum dolor sit amet consectetur, adipisicing elit. Corporis quam sed recusandae debitis illum quas aliquid dolorem odit. Nobis ea ullam quae earum aperiam, excepturi non soluta suscipit tempora voluptas?</p>'
+            },
+            {
+              id: 3,
+              title: 'Cupcake Ipsum',
+              content: '<p>ipsum dolor sit amet consectetur, adipisicing elit. Corporis quam sed recusandae debitis illum quas aliquid dolorem odit. Nobis ea ullam quae earum aperiam, excepturi non soluta suscipit tempora voluptas?</p>'
+            }
+          ],
+          selectedPost: null
+        }
+      },
+      template: `
+        <div class="posts-tab">
+          <ul class="posts-sidebar">
+            <li
+              v-for="post in posts"
+              :key = "post.id"
+              :class = "{selected : post === selectedPost}"
+              v-on:click = "selectedPost = post">
+              {{post.title}}
+              </li>
+          </ul>
+          <div class="selected-post-container">
+            <div
+             v-if = "selectedPost"
+             class = "selected-post">
+              <h3>{{selectedPost.title}}</h3>
+              <div v-html="selectedPost.content"></div>  
+            </div>  
+            <strong v-else>
+              Click on a blog title to the left to view it.
+            </strong>
+          </div>
+        </div>
+      `,
+    })
+    //전역 컴포넌트 2 
+    Vue.component('tab-archive' , {
+      template : '<div>Archive Component</div>'
+    })
+    let tabApp = new Vue({
+      el: '#dynamic-component-demo',
+      data: {
+        currentTab: 'Posts',
+        tabs: ['Posts', 'Archive']
+      },
+      computed: {
+        currentTabComponent: function () {
+          return 'tab-' + this.currentTab.toLowerCase();
+        }
+      }
+    })
+    //
+  </script>
+</body>
+
+</html>
