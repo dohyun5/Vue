@@ -37,12 +37,10 @@ export default //무엇을 밖으로 내보낼 것인가
   },
   methods: {
     boardDelete(no){
-      for(let i=0;i<this.object.length;i++){
-        if(this.object[i].no == no){
-          this.object.splice(i,1);
-        }
-      }
-      this.$parent.setDataArray(this.object);//부모에게 전달하기 위해서?
+      fetch('http://192.168.0.51:8081/myserver/boardDelete?no='+no)
+      .then(response => response.text())
+      .then(data => console.log(data))
+      .catch(err => console.log(err));
     },
     
   }

@@ -12,8 +12,7 @@ export default {
                          </td>
                      </tr>
                    </table>
-                   <!--<button style="float:right;" v-on:click="boardList">목록</button>-->
-                   <router-link tag="button" style="float:right;" to="/boardList">목록</router-link>
+                   <router-link tag="button" style="float:right;" :to="{name : 'boardList'}">목록</router-link>
                    <button style="float:right;" v-on:click="boardSave">저장</button>
              </div>`,
    data:function(){
@@ -27,23 +26,26 @@ export default {
     //    this.$emit('board-list');
     //  },
      boardSave : function(){
-       //this.$emit('board-save', this.title, this.content);
-      let dataArray = this.$parent.getDataArray();
-      let no = 1;
-      if(dataArray.length != 0){
-        let index = dataArray.length-1;
-        no = parseInt(dataArray[index].no)+1 //json 내부의 데이터는 모두 String이기때문에 type변환[parseInt]이 필요 
-      }
-      let board_info = {
-        'no' : no,
-        'title' : this.title,
-        'content' : this.content,
-        'view' : 0
-      }
-      dataArray.push(board_info);
-
-      this.$parent.setDataArray(dataArray);
-      this.$router.push({name : 'boardList'}); //강제로 경로를 요청하는 코드 
+      
+      // fetch('http://192.168.0.51:8081/myserver/boardInsert?title='+this.title+"&content="+this.content)
+      // fetch('http://192.168.0.51:8081/myserver/boardInsert',{
+      //   method : 'POST',
+      //   headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      //   body:new URLSearchParams({title:this.title, content: this.content})
+      // })
+      fetch('http://192.168.0.51:8081/myserver/boardInsert',{
+        method : 'post',
+        headers : {
+          'Content-type' : 'application/json'
+        },
+        body: JSON.stringify({title : this.title, content : this.content})
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        this.$router.push({name : 'boardList'}); //성공했을때 목록으로 보내기 위해서 ! catch아래에 사용하면 성공여부를 떠나서 목록으로 보내버림(비동기)
+      })
+      .catch(err => console.log(err))
      }
    } 
 };
